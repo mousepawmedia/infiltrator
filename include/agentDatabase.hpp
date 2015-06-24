@@ -195,10 +195,12 @@ class AgentDatabase
         \return the resulting integer*/
         static int ustring_to_int(const Glib::ustring&);
 
-        ~AgentDatabase();
-    private:
         ///The pointer storing the key generator instance for the game.
         KeyGen* keygen;
+
+        ~AgentDatabase();
+    private:
+
 
         /**Generate the agents from the PlayerList, as well as their teams.
         ONLY CALL THIS AT GAME START!

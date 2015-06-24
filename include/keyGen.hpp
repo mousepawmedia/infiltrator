@@ -39,13 +39,14 @@ class KeyGen
 
         unsigned int gamemasterCode;
 
+        unsigned int entropy;
+
         ~KeyGen();
     private:
         int szuPairing(int, int);
         int getXFromSzu(int);
         int getYFromSzu(int);
 
-        unsigned int entropy;
         unsigned int seed;
         std::vector<unsigned int> sequence;
         std::minstd_rand* infinite_improbability_drive;
