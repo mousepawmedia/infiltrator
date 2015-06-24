@@ -41,6 +41,7 @@
 		<Unit filename="include/agentDatabase.hpp" />
 		<Unit filename="include/agentWindow.hpp" />
 		<Unit filename="include/customWidgets.hpp" />
+		<Unit filename="include/fileEncryption.hpp" />
 		<Unit filename="include/gameWindow.hpp" />
 		<Unit filename="include/keyGen.hpp" />
 		<Unit filename="main.cpp" />
@@ -48,6 +49,7 @@
 		<Unit filename="src/agentDatabase.cpp" />
 		<Unit filename="src/agentWindow.cpp" />
 		<Unit filename="src/customWidgets.cpp" />
+		<Unit filename="src/fileEncryption.cpp" />
 		<Unit filename="src/gameWindow.cpp" />
 		<Unit filename="src/keyGen.cpp" />
 		<Extensions>
