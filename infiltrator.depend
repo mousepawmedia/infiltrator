@@ -4931,7 +4931,7 @@
 1435094437 source:/home/taco/repos/labs/infiltrator/trunk/src/fileEncryption.cpp
 	"fileEncryption.hpp"
 
-1435104969 source:/home/taco/repos/infiltrator-git/main.cpp
+1435459298 source:/home/taco/repos/infiltrator-git/main.cpp
 	<glibmm.h>
 	<gtkmm/application.h>
 	<gtkmm/window.h>
@@ -4963,7 +4963,7 @@
 	"agentDatabase.hpp"
 	"customWidgets.hpp"
 
-1435148989 /home/taco/repos/infiltrator-git/include/agentDatabase.hpp
+1435462049 /home/taco/repos/infiltrator-git/include/agentDatabase.hpp
 	<algorithm>
 	<iostream>
 	<set>
@@ -5001,14 +5001,16 @@
 	<agentWindow.hpp>
 	<customWidgets.hpp>
 
-1435150584 /home/taco/repos/infiltrator-git/include/fileEncryption.hpp
+1435533418 /home/taco/repos/infiltrator-git/include/fileEncryption.hpp
 	<glibmm.h>
 	<iostream>
 	<fstream>
 	<set>
+	<string.h>
+	<sstream>
 	"agentDatabase.hpp"
 
-1435104945 source:/home/taco/repos/infiltrator-git/src/agentDatabase.cpp
+1435169026 source:/home/taco/repos/infiltrator-git/src/agentDatabase.cpp
 	"agentDatabase.hpp"
 
 1435104945 source:/home/taco/repos/infiltrator-git/src/agentWindow.cpp
@@ -5017,7 +5019,7 @@
 1435104945 source:/home/taco/repos/infiltrator-git/src/customWidgets.cpp
 	"customWidgets.hpp"
 
-1435149979 source:/home/taco/repos/infiltrator-git/src/fileEncryption.cpp
+1435537679 source:/home/taco/repos/infiltrator-git/src/fileEncryption.cpp
 	"fileEncryption.hpp"
 
 1435104945 source:/home/taco/repos/infiltrator-git/src/gameWindow.cpp

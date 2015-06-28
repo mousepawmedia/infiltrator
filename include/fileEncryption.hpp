@@ -6,6 +6,8 @@
 #include <iostream>
 #include <fstream>
 #include <set>
+#include <string.h>
+#include <sstream>
 
 #include "agentDatabase.hpp"
 
@@ -26,7 +28,7 @@ class fileEncryption
         /**A utility function that reads game data from a file.
         \param the AgentDatabase class object to save data to
         \return the resulting boolean*/
-        bool readFile();
+        bool readFile(AgentDatabase*);
     private:
         ///The game name which is also the filename data is saved to.
         Glib::ustring gameName;

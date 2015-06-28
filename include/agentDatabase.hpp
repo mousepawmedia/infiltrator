@@ -24,6 +24,9 @@ class AgentDatabase
         */
         AgentDatabase(PlayerList*, int=180, int=180);
 
+        //Added for testing, might need to be deleted.
+        AgentDatabase();
+
         /**The struct defining a team.*/
         struct Team
         {
