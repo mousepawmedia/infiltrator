@@ -24,6 +24,9 @@ class AgentDatabase
         */
         AgentDatabase(PlayerList*, int=180, int=180);
 
+        //Added for testing, might need to be deleted.
+        AgentDatabase();
+
         /**The struct defining a team.*/
         struct Team
         {
@@ -195,10 +198,12 @@ class AgentDatabase
         \return the resulting integer*/
         static int ustring_to_int(const Glib::ustring&);
 
-        ~AgentDatabase();
-    private:
         ///The pointer storing the key generator instance for the game.
         KeyGen* keygen;
+
+        ~AgentDatabase();
+    private:
+
 
         /**Generate the agents from the PlayerList, as well as their teams.
         ONLY CALL THIS AT GAME START!

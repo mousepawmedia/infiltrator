@@ -55,6 +55,11 @@ AgentDatabase::AgentDatabase(PlayerList* players, int defEncryptSeconds,
     spycatcher = 0;
 }
 
+AgentDatabase::AgentDatabase()
+{
+    keygen = new KeyGen();
+}
+
 AgentDatabase::Agent::Agent(Glib::ustring last, Glib::ustring first,
     unsigned int defEncryptSeconds, unsigned int defTapSeconds)
 {

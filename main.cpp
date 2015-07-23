@@ -9,9 +9,11 @@
 #include "gameWindow.hpp"
 #include "PlayerList.hpp"
 #include "keyGen.hpp"
+#include "fileEncryption.hpp"
 
 int main(int argc, char *argv[])
 {
+    /*
     PlayerList players;
     players.addPlayer("Llewellyn", "Ozymandius");
     players.addPlayer("Llewellyn", "Millicent");
@@ -26,12 +28,19 @@ int main(int argc, char *argv[])
     players.addPlayer("Wozwak", "Quincy");
     players.addPlayer("Nutley", "Yvette");
 
-    AgentDatabase database(&players);
+    AgentDatabase database(&players);*/
+    AgentDatabase testing;
+
+    //For testing save game purposes
+    fileEncryption fe("Testing123");
+    fe.readFile(&testing);
+    fileEncryption de("Testing1234");
+    de.saveFile(testing);
 
     Glib::RefPtr<Gtk::Application> app =
         Gtk::Application::create(argc, argv, "com.mousepawgames.labs.infiltrator");
 
-    gameWindow window(&database);
+    gameWindow window(&testing);
 
     // We'll pass our application's return code here.
     return app->run(window);
