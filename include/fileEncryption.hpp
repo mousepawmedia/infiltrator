@@ -7,7 +7,8 @@
 #include <fstream>
 #include <set>
 #include <string.h>
-#include <sstream>
+#include <time.h>
+#include <stdlib.h>
 
 #include "agentDatabase.hpp"
 
@@ -32,12 +33,18 @@ class fileEncryption
     private:
         ///The game name which is also the filename data is saved to.
         Glib::ustring gameName;
-        /**A utility function that decrypts the saved data file.
-        \return the resulting boolean*/
-        bool encryptFile();
         /**A utility function that encrypts the saved data file.
         \return the resulting boolean*/
-        bool decryptFile();
+        bool encryptFile();
+        /**A utility function that decrypts the saved data file strings.
+        \return the resulting ustring*/
+        Glib::ustring decryptFileString(ifstream*, int);
+        /**A utility function that decrypts the saved data file ints.
+        \return the resulting int*/
+        int decryptFileInt(ifstream*, int);
+        /**A utility function that offsets chars based on cipher.
+        \return the resulting ustring*/
+        Glib::ustring decrypt(Glib::ustring, int);
 };
 
 #endif // FILEENCRYPTION_H

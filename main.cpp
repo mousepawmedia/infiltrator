@@ -32,10 +32,10 @@ int main(int argc, char *argv[])
     AgentDatabase testing;
 
     //For testing save game purposes
-    fileEncryption fe("Testing123");
+    fileEncryption fe("Testing1234");
     fe.readFile(&testing);
-    fileEncryption de("Testing1234");
-    de.saveFile(testing);
+    //fileEncryption de("Testing1234");
+    fe.saveFile(testing);
 
     Glib::RefPtr<Gtk::Application> app =
         Gtk::Application::create(argc, argv, "com.mousepawgames.labs.infiltrator");

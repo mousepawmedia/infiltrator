@@ -14,17 +14,19 @@ bool fileEncryption::readFile(AgentDatabase *agent)
 {
     try
     {
-        ifstream myfile (gameName + ".txt");
-        if (myfile.is_open())
+        ifstream myfile(gameName + ".txt");
+        if(myfile.is_open())
         {
+            ///Reads cipher number to offset all chars in the file
+            int cipher;
+            myfile >> cipher;
             ///Reading agent general info from saved game file
-            myfile >> agent->activeAgents;
-            myfile >> agent->spycatcher;
-            myfile >> agent->keygen->entropy;
+            agent->activeAgents = decryptFileInt(&myfile, cipher);
+            agent->spycatcher = decryptFileInt(&myfile, cipher);
+            agent->keygen->entropy = decryptFileInt(&myfile, cipher);
 
             ///Reading team info from saved game file
-            int teamnum;
-            myfile >> teamnum;
+            int teamnum = decryptFileInt(&myfile, cipher);
             string temp;
             ///gets the "\n" out
             getline(myfile, temp);
@@ -33,30 +35,25 @@ bool fileEncryption::readFile(AgentDatabase *agent)
             {
                 AgentDatabase::Team team;
                 getline(myfile, temp);
-                team.teamName = temp;
+                team.teamName = decrypt(temp, cipher);
                 getline(myfile, temp);
-                team.signal = temp;
+                team.signal = decrypt(temp, cipher);
                 agent->teams.push_back(team);
             }
 
             ///Reads agent info from saved game file
-            int agentnum;
-            myfile >> agentnum;
+            int agentnum = decryptFileInt(&myfile, cipher);
             for(i = 0; i < agentnum; i++)
             {
-                Glib::ustring first;
-                Glib::ustring last;
-                int encryptSec;
-                int tapSec;
-                myfile >> first;
-                myfile >> last;
-                myfile >> encryptSec;
-                myfile >> tapSec;
+                Glib::ustring first = decryptFileString(&myfile, cipher);
+                Glib::ustring last = decryptFileString(&myfile, cipher);
+                int encryptSec = decryptFileInt(&myfile, cipher);
+                int tapSec = decryptFileInt(&myfile, cipher);
                 AgentDatabase::Agent myagent(last, first, encryptSec, tapSec);
 
                 ///Reads team name, finds team signal, and copies team info into the agents info
                 myagent.team = new AgentDatabase::Team();
-                myfile >> myagent.team->teamName;
+                myagent.team->teamName = decryptFileString(&myfile, cipher);
                 unsigned int x;
                 for(x = 0; x < agent->teams.size(); x++)
                 {
@@ -65,22 +62,23 @@ bool fileEncryption::readFile(AgentDatabase *agent)
                 }
 
                 ///Finishes reading agent info
-                myfile >> myagent.id;
-                myfile >> myagent.active;
-                myfile >> myagent.marked;
-                myfile >> myagent.cloaked;
-                myfile >> myagent.cloakUsed;
-                myfile >> myagent.encrypted;
-                myfile >> myagent.struck;
-                myfile >> myagent.surprise;
-                myfile >> myagent.infiltrator;
-                myfile >> myagent.overrides;
-                myfile >> myagent.encryptee;
-                myfile >> myagent.securitycode;
+                myagent.id = decryptFileInt(&myfile, cipher);
+                myagent.active = decryptFileInt(&myfile, cipher);
+                myagent.marked = decryptFileInt(&myfile, cipher);
+                myagent.cloaked = decryptFileInt(&myfile, cipher);
+                myagent.cloakUsed = decryptFileInt(&myfile, cipher);
+                myagent.encrypted = decryptFileInt(&myfile, cipher);
+                myagent.struck = decryptFileInt(&myfile, cipher);
+                myagent.surprise = decryptFileInt(&myfile, cipher);
+                myagent.infiltrator = decryptFileInt(&myfile, cipher);
+                myagent.overrides = decryptFileInt(&myfile, cipher);
+                myagent.encryptee = decryptFileInt(&myfile, cipher);
+                myagent.securitycode = decryptFileInt(&myfile, cipher);
 
                 ///Gets a comma separated list of connections and tokenizes them. Then after some converting puts them into the connection set.
                 getline(myfile, temp);
                 getline(myfile, temp);
+                temp = decrypt(temp, cipher);
                 if(temp != "0")
                 {
                     char* token = &temp[0];
@@ -93,6 +91,7 @@ bool fileEncryption::readFile(AgentDatabase *agent)
                     }
                 }
                 getline(myfile, temp);
+                temp = decrypt(temp, cipher);
 
                 ///Gets a comma separated list of codes and tokenizes them.  Then after some converting puts them into the codes set.
                 char* token = &temp[0];
@@ -123,14 +122,108 @@ bool fileEncryption::readFile(AgentDatabase *agent)
     }
 }
 
-bool fileEncryption::encryptFile()
+Glib::ustring fileEncryption::decryptFileString(ifstream *myfile, int cipher)
 {
-    return true;
+    Glib::ustring temp;
+    *myfile >> temp;
+    temp = decrypt(temp, cipher);
+    return temp;
 }
 
-bool fileEncryption::decryptFile()
+int fileEncryption::decryptFileInt(ifstream *myfile, int cipher)
 {
-    return true;
+    int tempint;
+    Glib::ustring temp;
+    *myfile >> temp;
+    temp = decrypt(temp, cipher);
+    tempint = atoi(temp.c_str());
+    return tempint;
+}
+
+Glib::ustring fileEncryption::decrypt(Glib::ustring temp, int cipher)
+{
+    cipher += 3;
+    //int check = temp.size();
+    //char dc[temp.size() - 1];
+    Glib::ustring dc = "";
+    int count = 0;
+    for(Glib::ustring::iterator it = temp.begin(); it!=temp.end(); ++it)
+    {
+        char ec = *it;
+        ec -= cipher;
+        ///Keeps it in range of output characters
+        if((int)ec < 32)
+        {
+            ec += 93;
+        }
+        dc.append(sizeof(char), ec);
+        count++;
+    }
+    return dc;
+}
+
+bool fileEncryption::encryptFile()
+{
+    try
+    {
+        ///Holds file contents
+        Glib::ustring buffer = "";
+        ifstream myfile(gameName + ".txt");
+        if(myfile.is_open())
+        {
+            ///Read file into ustring
+            while(!myfile.eof()){
+                string temp;
+                getline(myfile, temp);
+                buffer += temp + "\n";
+            }
+            myfile.close();
+            ofstream outfile(gameName + ".txt");
+            if(outfile.is_open())
+            {
+                ///Gets a random number between 1 and 20 to use to offset each char in buffer
+                int cipher;
+                srand (time(NULL));
+                cipher = rand() % 20 + 1;
+                ///Writes the cipher number to the file, but adds 3 to it to use as the cipher so no one that reads the file can tell what number its offset by
+                outfile << cipher << endl;
+                cipher += 3;
+                ///Iterates through the ustring and adds the cipher to the ascii value of each char
+                for(Glib::ustring::iterator it = buffer.begin(); it!=buffer.end(); ++it)
+                {
+                    unsigned char temp = *it;
+                    ///bypasses new lines
+                    if(temp != '\n')
+                    {
+                        temp += cipher;
+                        ///Keeps it in range of output characters
+                        if((int)temp > 126)
+                        {
+                            temp -= 93;
+                        }
+                    }
+                    outfile << temp;
+                }
+                outfile.close();
+            }
+            else
+            {
+                cout << "Unable to open file";
+                return false;
+            }
+            return true;
+        }
+        else
+        {
+            cout << "Unable to open file";
+            return false;
+        }
+    }
+    catch(...)
+    {
+        cout << "Error reading file";
+        return false;
+    }
 }
 
 bool fileEncryption::saveFile(AgentDatabase agent)
@@ -138,8 +231,8 @@ bool fileEncryption::saveFile(AgentDatabase agent)
     try
     {
         ///creates a file with the game name
-        ofstream myfile (gameName + ".txt");
-        if (myfile.is_open())
+        ofstream myfile(gameName + ".txt");
+        if(myfile.is_open())
         {
             ///Saves active agents and spycatcher ints
             myfile << agent.activeAgents << endl;
@@ -248,6 +341,10 @@ bool fileEncryption::saveFile(AgentDatabase agent)
                 myfile << endl;
             }
             myfile.close();
+            if(encryptFile() == false)
+            {
+                cout << "Unable to encrypt file";
+            }
             return true;
         }
         else
