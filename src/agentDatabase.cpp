@@ -189,9 +189,6 @@ void AgentDatabase::generateAgents(PlayerList* players)
             }
         }
     }
-
-    //NOTE: Turn this off before release!
-    printGameData();
 }
 
 bool AgentDatabase::accuseAgent(int agentID, int accuseID)

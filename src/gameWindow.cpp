@@ -1,8 +1,9 @@
 #include "gameWindow.hpp"
 
-gameWindow::gameWindow(AgentDatabase* adb)
+gameWindow::gameWindow(AgentDatabase* adb, fileEncryption* afe)
 {
     db = adb;
+    fe = afe;
 
     //Set the default size.
     set_default_size(500, 600);
@@ -24,18 +25,7 @@ gameWindow::gameWindow(AgentDatabase* adb)
     //Add the box to the window.
     add(box_main);
 
-    //Add the title label...
-
-    //We are going to use Pango to make it really fancy.
-    lbl_title.set_use_markup(true);
-    //Center the text.
-    lbl_title.set_justify(Gtk::JUSTIFY_CENTER);
-    /*The title "INFILTRATOR" should be large and bold. Make the A stand out
-    by making it red and raising it above the rest, thus representing the
-    infiltrator player. In the subtitle, make convert italic.*/
-    lbl_title.set_markup("<big><b>INFILTR\
-<span foreground=\"red\" rise=\"5000\">A</span>TOR</b></big>\
-\nThe Game of <i>Covert</i> Operations");
+    //The title label (lbl_title) is already setup in customWidgets.cpp.
 
     //Add the label to the box.
     box_main.pack_start(lbl_title, Gtk::PACK_SHRINK);
@@ -137,6 +127,8 @@ gameWindow::gameWindow(AgentDatabase* adb)
     //Show everything on this window.
     show_all_children(true);
 
+    //Go ahead and save the game now.
+    saveGame();
 }
 
 void gameWindow::addScores()
@@ -204,6 +196,18 @@ void gameWindow::login()
 
         /*We don't clear the text entries here, so they can potentially fix
         a mistake.*/
+    }
+}
+
+void gameWindow::saveGame()
+{
+    //Save the current agent database instance to the file.
+    if(fe->saveFile(db) == false)
+    {
+        Gtk::MessageDialog dlg_saveerr(*this, "Error Saving game",
+                false, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK, true);
+        dlg_saveerr.set_secondary_text(fe->getError());
+        dlg_saveerr.run();
     }
 }
 
@@ -278,11 +282,15 @@ bool gameWindow::winClosed(GdkEventAny* event)
     //Update the scores.
     updateScores();
 
+    //Save the game.
+    saveGame();
+
     //Do NOT prevent other handlers from working with the window's delete_event.
     return false;
 }
 
 gameWindow::~gameWindow()
 {
-    //dtor
+    //Save the game one last time...
+    saveGame();
 }

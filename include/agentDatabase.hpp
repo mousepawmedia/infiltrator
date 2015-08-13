@@ -11,7 +11,7 @@
 #include <glibmm.h>
 
 //In-project includes
-#include "PlayerList.hpp"
+#include "playerList.hpp"
 #include "keyGen.hpp"
 
 class AgentDatabase
@@ -19,12 +19,11 @@ class AgentDatabase
     public:
         /**Creates a new agent database.
         \param A pointer to the game's key generator (KeyGen)
-        \param the number of encryptions to start with
-        \param the number of interception seconds to start with
-        */
+        \param the number of encryption seconds to start with
+        \param the number of interception seconds to start with*/
         AgentDatabase(PlayerList*, int=180, int=180);
 
-        //Added for testing, might need to be deleted.
+        ///Creates an empty agent database, for loading from a file.
         AgentDatabase();
 
         /**The struct defining a team.*/
@@ -201,6 +200,11 @@ class AgentDatabase
         ///The pointer storing the key generator instance for the game.
         KeyGen* keygen;
 
+        /**Print all players, their login info, teams, codes, and whether they're
+        the infiltrator.
+        \param whether to print out a master list of all the codes*/
+        void printGameData(bool=false);
+
         ~AgentDatabase();
     private:
 
@@ -229,11 +233,6 @@ class AgentDatabase
         //Team signals.
         static const unsigned int SIGNALS_CNT = 16;
         static const Glib::ustring signals[SIGNALS_CNT];
-
-        /**Print all players, their login info, teams, codes, and whether they're
-        the infiltrator.
-        \param whether to print out a master list of all the codes*/
-        void printGameData(bool=false);
 };
 
 #endif // AGENTDATABASE_H

@@ -1,7 +1,9 @@
 #ifndef PLAYERLIST_H
 #define PLAYERLIST_H
 
+#include <iostream>
 #include <glibmm.h>
+#include <algorithm>
 #include <queue>
 
 class PlayerList
@@ -21,6 +23,7 @@ class PlayerList
         };
 
         void addPlayer(Glib::ustring, Glib::ustring);
+        int getCount();
         Player getPlayer();
 
         virtual ~PlayerList();

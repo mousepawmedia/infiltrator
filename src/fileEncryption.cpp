@@ -1,8 +1,8 @@
 #include "fileEncryption.hpp"
 
-fileEncryption::fileEncryption(Glib::ustring fileName)
+fileEncryption::fileEncryption(Glib::ustring filePath)
 {
-    gameName = fileName;
+    gamePath = filePath;
 }
 
 fileEncryption::~fileEncryption()
@@ -14,21 +14,21 @@ bool fileEncryption::readFile(AgentDatabase *agent)
 {
     try
     {
-        ifstream myfile(gameName + ".txt");
+        ifstream myfile(gamePath);
         if(myfile.is_open())
         {
-            ///Reads cipher number to offset all chars in the file
+            //Reads cipher number to offset all chars in the file
             int cipher;
             myfile >> cipher;
-            ///Reading agent general info from saved game file
+            //Reading agent general info from saved game file
             agent->activeAgents = decryptFileInt(&myfile, cipher);
             agent->spycatcher = decryptFileInt(&myfile, cipher);
             agent->keygen->entropy = decryptFileInt(&myfile, cipher);
 
-            ///Reading team info from saved game file
+            //Reading team info from saved game file
             int teamnum = decryptFileInt(&myfile, cipher);
             string temp;
-            ///gets the "\n" out
+            //gets the "\n" out
             getline(myfile, temp);
             int i;
             for(i = 0; i < teamnum; i++)
@@ -41,7 +41,7 @@ bool fileEncryption::readFile(AgentDatabase *agent)
                 agent->teams.push_back(team);
             }
 
-            ///Reads agent info from saved game file
+            //Reads agent info from saved game file
             int agentnum = decryptFileInt(&myfile, cipher);
             for(i = 0; i < agentnum; i++)
             {
@@ -51,7 +51,7 @@ bool fileEncryption::readFile(AgentDatabase *agent)
                 int tapSec = decryptFileInt(&myfile, cipher);
                 AgentDatabase::Agent myagent(last, first, encryptSec, tapSec);
 
-                ///Reads team name, finds team signal, and copies team info into the agents info
+                //Reads team name, finds team signal, and copies team info into the agents info
                 myagent.team = new AgentDatabase::Team();
                 myagent.team->teamName = decryptFileString(&myfile, cipher);
                 unsigned int x;
@@ -61,7 +61,7 @@ bool fileEncryption::readFile(AgentDatabase *agent)
                         myagent.team->signal = agent->teams[x].signal;
                 }
 
-                ///Finishes reading agent info
+                //Finishes reading agent info
                 myagent.id = decryptFileInt(&myfile, cipher);
                 myagent.active = decryptFileInt(&myfile, cipher);
                 myagent.marked = decryptFileInt(&myfile, cipher);
@@ -75,7 +75,7 @@ bool fileEncryption::readFile(AgentDatabase *agent)
                 myagent.encryptee = decryptFileInt(&myfile, cipher);
                 myagent.securitycode = decryptFileInt(&myfile, cipher);
 
-                ///Gets a comma separated list of connections and tokenizes them. Then after some converting puts them into the connection set.
+                //Gets a comma separated list of connections and tokenizes them. Then after some converting puts them into the connection set.
                 getline(myfile, temp);
                 getline(myfile, temp);
                 temp = decrypt(temp, cipher);
@@ -93,7 +93,7 @@ bool fileEncryption::readFile(AgentDatabase *agent)
                 getline(myfile, temp);
                 temp = decrypt(temp, cipher);
 
-                ///Gets a comma separated list of codes and tokenizes them.  Then after some converting puts them into the codes set.
+                //Gets a comma separated list of codes and tokenizes them.  Then after some converting puts them into the codes set.
                 char* token = &temp[0];
                 char* codetemp = strtok(token, ",");;
                 while(codetemp != NULL)
@@ -103,7 +103,7 @@ bool fileEncryption::readFile(AgentDatabase *agent)
                     codetemp = strtok(NULL, ",");
                 }
 
-                ///Adds agent to agent vector
+                //Adds agent to agent vector
                 agent->agents.push_back(myagent);
             }
 
@@ -111,13 +111,13 @@ bool fileEncryption::readFile(AgentDatabase *agent)
         }
         else
         {
-            cout << "Unable to open file";
+            str_error = "Unable to open file";
             return false;
         }
     }
     catch(...)
     {
-        cout << "Error reading file";
+        str_error = "Error reading file";
         return false;
     }
 }
@@ -151,7 +151,7 @@ Glib::ustring fileEncryption::decrypt(Glib::ustring temp, int cipher)
     {
         char ec = *it;
         ec -= cipher;
-        ///Keeps it in range of output characters
+        //Keeps it in range of output characters
         if((int)ec < 32)
         {
             ec += 93;
@@ -166,29 +166,29 @@ bool fileEncryption::encryptFile()
 {
     try
     {
-        ///Holds file contents
+        //Holds file contents
         Glib::ustring buffer = "";
-        ifstream myfile(gameName + ".txt");
+        ifstream myfile(gamePath);
         if(myfile.is_open())
         {
-            ///Read file into ustring
+            //Read file into ustring
             while(!myfile.eof()){
                 string temp;
                 getline(myfile, temp);
                 buffer += temp + "\n";
             }
             myfile.close();
-            ofstream outfile(gameName + ".txt");
+            ofstream outfile(gamePath);
             if(outfile.is_open())
             {
-                ///Gets a random number between 1 and 20 to use to offset each char in buffer
+                //Gets a random number between 1 and 20 to use to offset each char in buffer
                 int cipher;
                 srand (time(NULL));
                 cipher = rand() % 20 + 1;
-                ///Writes the cipher number to the file, but adds 3 to it to use as the cipher so no one that reads the file can tell what number its offset by
+                //Writes the cipher number to the file, but adds 3 to it to use as the cipher so no one that reads the file can tell what number its offset by
                 outfile << cipher << endl;
                 cipher += 3;
-                ///Iterates through the ustring and adds the cipher to the ascii value of each char
+                //Iterates through the ustring and adds the cipher to the ascii value of each char
                 for(Glib::ustring::iterator it = buffer.begin(); it!=buffer.end(); ++it)
                 {
                     unsigned char temp = *it;
@@ -208,38 +208,38 @@ bool fileEncryption::encryptFile()
             }
             else
             {
-                cout << "Unable to open file";
+                str_error = "Unable to open file";
                 return false;
             }
             return true;
         }
         else
         {
-            cout << "Unable to open file";
+            str_error = "Unable to open file";
             return false;
         }
     }
     catch(...)
     {
-        cout << "Error reading file";
+        str_error = "Error reading file";
         return false;
     }
 }
 
-bool fileEncryption::saveFile(AgentDatabase agent)
+bool fileEncryption::saveFile(AgentDatabase* agent)
 {
     try
     {
-        ///creates a file with the game name
-        ofstream myfile(gameName + ".txt");
+        //creates a file with the game name
+        ofstream myfile(gamePath);
         if(myfile.is_open())
         {
-            ///Saves active agents and spycatcher ints
-            myfile << agent.activeAgents << endl;
-            myfile << agent.spycatcher << endl;
+            //Saves active agents and spycatcher ints
+            myfile << agent->activeAgents << endl;
+            myfile << agent->spycatcher << endl;
 
-            ///Saves the entropy number for reverse engineering
-            myfile << agent.keygen->entropy << endl;
+            //Saves the entropy number for reverse engineering
+            myfile << agent->keygen->entropy << endl;
 
             /* Saves the number of teams and then team info to the file. Format is:
                 # of teams
@@ -248,12 +248,12 @@ bool fileEncryption::saveFile(AgentDatabase agent)
                 Team Name
                 ect... (repeats the # of teams)
             */
-            myfile << agent.teams.size() << endl;
+            myfile << agent->teams.size() << endl;
             unsigned int i;
-            for(i = 0; i < agent.teams.size(); i++)
+            for(i = 0; i < agent->teams.size(); i++)
             {
-                myfile << agent.teams[i].teamName << "\n"
-                       << agent.teams[i].signal << endl;
+                myfile << agent->teams[i].teamName << "\n"
+                       << agent->teams[i].signal << endl;
             }
 
             /* Saves the number of agents and agent info to the file. Format is:
@@ -281,37 +281,37 @@ bool fileEncryption::saveFile(AgentDatabase agent)
                 ect... (repeats the # of teams)
             */
 
-            myfile << agent.agents.size() << endl;
-            for(i = 0; i < agent.agents.size(); i++)
+            myfile << agent->agents.size() << endl;
+            for(i = 0; i < agent->agents.size(); i++)
             {
 
-                ///Iterrates through each agent as saves all its relevent data to a file.
-                myfile << agent.agents[i].firstName << "\n"
-                       << agent.agents[i].lastName << "\n"
-                       << agent.agents[i].encryptSeconds << "\n"
-                       << agent.agents[i].tapSeconds << "\n"
-                       << agent.agents[i].team->teamName << "\n"
-                       << agent.agents[i].id << "\n"
-                       << agent.agents[i].active << "\n"
-                       << agent.agents[i].marked << "\n"
-                       << agent.agents[i].cloaked << "\n"
-                       << agent.agents[i].cloakUsed << "\n"
-                       << agent.agents[i].encrypted << "\n"
-                       << agent.agents[i].struck << "\n"
-                       << agent.agents[i].surprise << "\n"
-                       << agent.agents[i].infiltrator << "\n"
-                       << agent.agents[i].overrides << "\n"
-                       << agent.agents[i].encryptee << "\n"
-                       << agent.agents[i].securitycode << endl;
+                //Iterrates through each agent as saves all its relevent data to a file.
+                myfile << agent->agents[i].firstName << "\n"
+                       << agent->agents[i].lastName << "\n"
+                       << agent->agents[i].encryptSeconds << "\n"
+                       << agent->agents[i].tapSeconds << "\n"
+                       << agent->agents[i].team->teamName << "\n"
+                       << agent->agents[i].id << "\n"
+                       << agent->agents[i].active << "\n"
+                       << agent->agents[i].marked << "\n"
+                       << agent->agents[i].cloaked << "\n"
+                       << agent->agents[i].cloakUsed << "\n"
+                       << agent->agents[i].encrypted << "\n"
+                       << agent->agents[i].struck << "\n"
+                       << agent->agents[i].surprise << "\n"
+                       << agent->agents[i].infiltrator << "\n"
+                       << agent->agents[i].overrides << "\n"
+                       << agent->agents[i].encryptee << "\n"
+                       << agent->agents[i].securitycode << endl;
 
-                ///If the agents connections set isn't empty it copies it to the file with comma separation, or a '0' if empty
-                if(agent.agents[i].connections.size() > 0)
+                //If the agents connections set isn't empty it copies it to the file with comma separation, or a '0' if empty
+                if(agent->agents[i].connections.size() > 0)
                 {
                     unsigned int count = 0;
                     std::set<int>::iterator iter;
-                    for(iter = agent.agents[i].connections.begin(); iter != agent.agents[i].connections.end(); iter++)
+                    for(iter = agent->agents[i].connections.begin(); iter != agent->agents[i].connections.end(); iter++)
                     {
-                        if(count + 1 == agent.agents[i].codes.size())
+                        if(count + 1 == agent->agents[i].connections.size())
                             myfile << *iter;
                         else
                             myfile << *iter << ",";
@@ -322,14 +322,14 @@ bool fileEncryption::saveFile(AgentDatabase agent)
                     myfile << "0";
                 myfile << endl;
 
-                ///Same as above but with codes set
-                if(agent.agents[i].codes.size() > 0)
+                //Same as above but with codes set
+                if(agent->agents[i].codes.size() > 0)
                 {
                     unsigned int count = 0;
                     std::set<int>::iterator iter2;
-                    for(iter2 = agent.agents[i].codes.begin(); iter2 != agent.agents[i].codes.end(); iter2++)
+                    for(iter2 = agent->agents[i].codes.begin(); iter2 != agent->agents[i].codes.end(); iter2++)
                     {
-                        if(count + 1 == agent.agents[i].codes.size())
+                        if(count + 1 == agent->agents[i].codes.size())
                             myfile << *iter2;
                         else
                             myfile << *iter2 << ",";
@@ -343,19 +343,26 @@ bool fileEncryption::saveFile(AgentDatabase agent)
             myfile.close();
             if(encryptFile() == false)
             {
-                cout << "Unable to encrypt file";
+                str_error = "Unable to encrypt file";
             }
             return true;
         }
         else
         {
-            cout << "Unable to open file";
+            str_error = "Unable to open file";
             return false;
         }
     }
     catch(...)
     {
-        cout << "Error saving file";
+        str_error = "Error saving file";
         return false;
     }
+}
+
+Glib::ustring fileEncryption::getError()
+{
+    Glib::ustring err = str_error;
+    str_error = "";
+    return err;
 }

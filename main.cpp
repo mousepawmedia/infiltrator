@@ -6,15 +6,16 @@
 
 #include "agentWindow.hpp"
 #include "agentDatabase.hpp"
-#include "gameWindow.hpp"
-#include "PlayerList.hpp"
-#include "keyGen.hpp"
 #include "fileEncryption.hpp"
+#include "gameWindow.hpp"
+#include "keyGen.hpp"
+#include "playerList.hpp"
+#include "primaryWindow.hpp"
+#include "setupWindow.hpp"
 
 int main(int argc, char *argv[])
 {
-    /*
-    PlayerList players;
+    /*PlayerList players;
     players.addPlayer("Llewellyn", "Ozymandius");
     players.addPlayer("Llewellyn", "Millicent");
     players.addPlayer("Aardvark", "Stephen");
@@ -29,21 +30,20 @@ int main(int argc, char *argv[])
     players.addPlayer("Nutley", "Yvette");
 
     AgentDatabase database(&players);*/
-    AgentDatabase testing;
+    /*AgentDatabase testing;
 
     //For testing save game purposes
     fileEncryption fe("Testing1234");
     fe.readFile(&testing);
     //fileEncryption de("Testing1234");
-    fe.saveFile(testing);
+    fe.saveFile(testing);*/
 
     Glib::RefPtr<Gtk::Application> app =
         Gtk::Application::create(argc, argv, "com.mousepawgames.labs.infiltrator");
 
-    gameWindow window(&testing);
+    primaryWindow window;
 
     // We'll pass our application's return code here.
     return app->run(window);
-
-    return 0;
+    ////return 0;
 }

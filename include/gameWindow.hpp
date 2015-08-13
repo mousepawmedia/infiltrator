@@ -14,19 +14,24 @@
 #include <agentDatabase.hpp>
 #include <agentWindow.hpp>
 #include <customWidgets.hpp>
+#include <fileEncryption.hpp>
 
 class gameWindow : public Gtk::Window
 {
     public:
         /**Defines a new game window for logging in and viewing scores.
-        \param a pointer to the agent database instance we're using*/
-        gameWindow(AgentDatabase*);
+        \param a pointer to the agent database instance we're using
+        \param a pointer to the file encryption object we're using*/
+        gameWindow(AgentDatabase*, fileEncryption*);
 
         ~gameWindow();
     private:
         /**The pointer to the agent database instance that the whole game is
         using.*/
         AgentDatabase* db;
+
+        /**The pointer to the file encryption object we're using.*/
+        fileEncryption* fe;
 
         /**The main box containing stuff.*/
         Gtk::Box box_main;
@@ -45,7 +50,7 @@ class gameWindow : public Gtk::Window
         NumberEntry txt_security;
 
         /**The label containing the game's fancy graphical title! Ooh, pretty!*/
-        Gtk::Label lbl_title;
+        TitleLabel lbl_title;
 
         /**The label prompting for the user ID.*/
         Gtk::Label lbl_id;
@@ -104,6 +109,9 @@ class gameWindow : public Gtk::Window
 
         /**Login using the ID and security code entered on the interface.*/
         void login();
+
+        /**Save the game.*/
+        void saveGame();
 
         /**Update the contents for the scores (game status) list, lst_scores.*/
         void updateScores();
