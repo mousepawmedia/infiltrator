@@ -3,6 +3,7 @@
 
 //STL includes
 #include <algorithm>
+#include <ctime>
 #include <iostream>
 #include <set>
 #include <vector>
@@ -11,7 +12,7 @@
 #include <glibmm.h>
 
 //In-project includes
-#include "PlayerList.hpp"
+#include "playerList.hpp"
 #include "keyGen.hpp"
 
 class AgentDatabase
@@ -19,12 +20,11 @@ class AgentDatabase
     public:
         /**Creates a new agent database.
         \param A pointer to the game's key generator (KeyGen)
-        \param the number of encryptions to start with
-        \param the number of interception seconds to start with
-        */
+        \param the number of encryption seconds to start with
+        \param the number of interception seconds to start with*/
         AgentDatabase(PlayerList*, int=180, int=180);
 
-        //Added for testing, might need to be deleted.
+        ///Creates an empty agent database, for loading from a file.
         AgentDatabase();
 
         /**The struct defining a team.*/
@@ -34,6 +34,22 @@ class AgentDatabase
             Glib::ustring teamName;
             /**The team's secret signal.*/
             Glib::ustring signal;
+        };
+
+        /**The struct defining an intercept.*/
+        struct Intercept
+        {
+            int ownerID;
+            int secondsLeft;
+            void decrease(int diff){secondsLeft-=diff;}
+        };
+
+        /**The struct defining an encrypt.*/
+        struct Encrypt
+        {
+            int ownerID;
+            int secondsLeft;
+            void decrease(int diff){secondsLeft-=diff;}
         };
 
         /**The struct defining an agent and his/her game info.*/
@@ -65,9 +81,6 @@ class AgentDatabase
             /**Has the agent used their cloak? (They only get one use!)*/
             bool cloakUsed;
 
-            /**Is the agent being protected against interception by someone?*/
-            bool encrypted;
-
             /**Has the agent been decommissioned while they were logged out?
             This applies both to being switched from marked to decommissioned,
             and to if the infiltrator was accused correctly.*/
@@ -75,6 +88,9 @@ class AgentDatabase
 
             ///Has the agent had something good happen while they were out?
             bool surprise;
+
+            ///Has the agent successfully intercepted someone?
+            bool intercept_success;
 
             /**How many times the gamemaster has logged in as the agent.*/
             unsigned int overrides;
@@ -85,10 +101,17 @@ class AgentDatabase
             /**How many seconds the agent has left for interception.*/
             int tapSeconds;
 
-            /**The id of the agent that this agent is protecting (encrypting).*/
-            unsigned int encryptee;
+            /**Set of intercepts for this agent*/
+            std::vector<Intercept> intercepts;
 
-            /**How many times the agent can protect (encrypt) the agent.*/
+            /**Set of encrypts for this agent*/
+            std::vector<Encrypt> encrypts;
+
+            /**The id of the agent that this agent is protecting (encrypting).
+            (Depreicated, use Encrypts struct in the 'encrypts' set.*/
+            ////unsigned int encryptee;
+
+            /**How many seconds the agent can encrypt teammates.*/
             int encryptSeconds;
 
             /**Is the agent the infiltrator?*/
@@ -130,6 +153,8 @@ class AgentDatabase
             /**The code was from the infiltrator, but the redeeming agent is
             being marked instead of immediately decommissioned.*/
             MARK = 6,
+            ///The code was intercepted by another agent.
+            INTERCEPTED = 7,
         };
 
         ///The vector of teams that are defined in the game.
@@ -185,8 +210,9 @@ class AgentDatabase
         /**Redeem a code, and trigger the consequences.
         \param the id of the agent redeeming the code
         \param the code being redeemed
+        \param whether the redemption is from an intercept
         \return the RedemptionCode for the result*/
-        RedemptionCode redeemCode(int, int);
+        RedemptionCode redeemCode(int, int, bool=false);
 
         /**A utility function converting an integer to a Glib::ustring.
         \param the integer to convert
@@ -198,12 +224,23 @@ class AgentDatabase
         \return the resulting integer*/
         static int ustring_to_int(const Glib::ustring&);
 
+        int getGamemasterCode();
+
         ///The pointer storing the key generator instance for the game.
         KeyGen* keygen;
 
+        /**Print all players, their login info, teams, codes, and whether they're
+        the infiltrator.
+        \param whether to print out a master list of all the codes*/
+        void printGameData(bool=false);
+
+        /**Update time remaining on all intercepts and encrypts.*/
+        void updateTimer();
+
         ~AgentDatabase();
     private:
-
+        ///The last time we checked timers.
+        time_t lastCheck;
 
         /**Generate the agents from the PlayerList, as well as their teams.
         ONLY CALL THIS AT GAME START!
@@ -229,11 +266,6 @@ class AgentDatabase
         //Team signals.
         static const unsigned int SIGNALS_CNT = 16;
         static const Glib::ustring signals[SIGNALS_CNT];
-
-        /**Print all players, their login info, teams, codes, and whether they're
-        the infiltrator.
-        \param whether to print out a master list of all the codes*/
-        void printGameData(bool=false);
 };
 
 #endif // AGENTDATABASE_H

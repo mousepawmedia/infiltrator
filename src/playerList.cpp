@@ -1,4 +1,4 @@
-#include "PlayerList.hpp"
+#include "playerList.hpp"
 
 PlayerList::PlayerList()
 {
@@ -9,6 +9,11 @@ void PlayerList::addPlayer(Glib::ustring last, Glib::ustring first)
 {
     Player newPlayer = Player(last, first);
     players.push(newPlayer);
+}
+
+int PlayerList::getCount()
+{
+    return players.size();
 }
 
 PlayerList::Player PlayerList::getPlayer()

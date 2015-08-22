@@ -32,6 +32,9 @@ class agentWindow : public Gtk::Window
     private:
         AgentDatabase* db;
         int agentID;
+        /**A pointer to the popup window, for when we dynamically allocate and
+        define a new one.*/
+        TimeSelectWindow* timeWindow = 0;
 
         Gtk::Box box_main,
                  box_status,
@@ -120,12 +123,20 @@ class agentWindow : public Gtk::Window
         void addCodes();
         void displayDecommDialog();
         void displayInfiltratorWon();
+        void displayInterceptSuccess();
         void viewTeamInfo();
         void viewCodes();
         void refreshAgents();
         void refreshButtons();
         void redeemCode();
         void logout();
+
+        /**Handle the signal that the popup window opened by actionEncrypt or actionIntercept was closed.
+        \param gtkmm demands a sacrifice, and it selects it itself. (The handler
+        will deal with this.
+        \return false, so we don't prevent other handlers from working with this
+        signal*/
+        bool winClosed(GdkEventAny*);
 };
 
 #endif // MAINWINDOW_H

@@ -53,11 +53,17 @@ AgentDatabase::AgentDatabase(PlayerList* players, int defEncryptSeconds,
 
     /*The spycatcher is 0 by default, meaning the infiltrator is not yet caught.*/
     spycatcher = 0;
+
+    //Set the last check to right now.
+    time(&lastCheck);
 }
 
 AgentDatabase::AgentDatabase()
 {
     keygen = new KeyGen();
+
+    //Set the last check to right now.
+    time(&lastCheck);
 }
 
 AgentDatabase::Agent::Agent(Glib::ustring last, Glib::ustring first,
@@ -69,6 +75,7 @@ AgentDatabase::Agent::Agent(Glib::ustring last, Glib::ustring first,
     marked = false;
     struck = false;
     surprise = false;
+    intercept_success = false;
     infiltrator = false;
 
     //Initially, the account has never had a login from gamemaster.
@@ -77,10 +84,6 @@ AgentDatabase::Agent::Agent(Glib::ustring last, Glib::ustring first,
     //Cloak and cloakUsed are off by default as well. ;)
     cloaked = false;
     cloakUsed = false;
-
-    //Encryption is off.
-    encryptee = 0;
-    encrypted = false;
 
     encryptSeconds = defEncryptSeconds;
     tapSeconds = defTapSeconds;
@@ -189,9 +192,6 @@ void AgentDatabase::generateAgents(PlayerList* players)
             }
         }
     }
-
-    //NOTE: Turn this off before release!
-    printGameData();
 }
 
 bool AgentDatabase::accuseAgent(int agentID, int accuseID)
@@ -282,63 +282,133 @@ void AgentDatabase::decommAgent(int id)
     }
 }
 
+int AgentDatabase::getGamemasterCode()
+{
+    return keygen->gamemasterCode;
+}
+
 void AgentDatabase::newSecurityCode(int id)
 {
     agents[id-1].securitycode = keygen->getRandom();
 }
 
-AgentDatabase::RedemptionCode AgentDatabase::redeemCode(int id, int code)
+AgentDatabase::RedemptionCode AgentDatabase::redeemCode(int id, int code, bool fromIntercept)
 {
+    //Update the encrypts and intercepts!
+    updateTimer();
+
+    //If the code is not in the master code list...
     if(codesmaster.count(code) == 0)
     {
+        //Return INVALID - don't redeem.
         return AgentDatabase::INVALID;
     }
+    //Else if the code is the agent's own code...
     else if(agents[id-1].codes.count(code) > 0)
     {
+        //Return OWN - don't redeem.
         return AgentDatabase::OWN;
     }
+    //Else if the code is already used...
     else if(codesused.count(code) > 0)
     {
+        //Return USED - don't redeem.
         return AgentDatabase::USED;
     }
-    else
+
+    //Otherwise, if the code is valid...
+
+    //We need to know who this is from.
+    int fromID = keygen->checkKey(code);
+
+    if(!fromIntercept)
     {
-        codesused.insert(code);
-        int fromID = keygen->checkKey(code);
-        if(agents[fromID-1].infiltrator)
+        //While there is an intercept...
+        for(int i = 0; i < agents[fromID - 1].intercepts.size(); i++)
         {
-            //If they're from the same team...
-            if(agents[id-1].team->teamName == agents[fromID-1].team->teamName)
+            //If there are no encrypts...
+            if(agents[fromID - 1].encrypts.size() <= 0)
             {
-                //Add as a connection to cover up the horrible truth.
-                agents[id-1].connections.insert(agents[fromID-1].id);
-                //Mark the agent redeeming the code.
-                agents[id-1].marked = true;
-                return AgentDatabase::MARK;
+                //Get the intercept owner ID.
+                int interID = agents[fromID - 1].intercepts[i].ownerID;
+
+                //Attempt to redeem the code for the intercept owner.
+                //If the code wasn't a repeat for the intercept owner...
+                if(AgentDatabase::redeemCode(interID, code, true) != AgentDatabase::REPEAT)
+                {
+                    //Remove the intercept from the list.
+                    agents[fromID - 1].intercepts.erase(agents[fromID - 1].intercepts.begin() + i);
+                    //Return INTERCEPTED signal.
+                    return AgentDatabase::INTERCEPTED;
+                }
+                //Otherwise, if the code WAS a repeat...
+                else
+                {
+                    //Keep looping.
+                    continue;
+                }
+                /*We can safely assume that it won't return OWN, because you cannot
+                put an intercept on yourself. Also, we already know it is not
+                INVALID or USED, since it passed the earlier test in this function.*/
             }
+            //Otherwise, if there is an encrypt...
             else
             {
-                //Add as a connection to confuse things.
-                agents[id-1].connections.insert(agents[fromID-1].id);
-                //Decommission the agent redeeming the code.
-                agents[id-1].active = false;
-                //If there are still active agents, decrease the count thereof.
-                activeAgents > 0 ? activeAgents-- : 0;
-                checkInfiltratorWon();
-                return AgentDatabase::POISON;
+                //We're totally safe. Proceed with regular redeem.
+                break;
             }
         }
-        else if(agents[id-1].connections.count(fromID) > 0)
+    }
+
+    //If nothing got in our way, proceed with standard redemption protocol.
+    codesused.insert(code);
+    if(agents[fromID-1].infiltrator)
+    {
+        //If they're from the same team OR if this is from an intercept...
+        if(agents[id-1].team->teamName == agents[fromID-1].team->teamName || fromIntercept)
         {
-            return AgentDatabase::REPEAT;
+            //Add as a connection to cover up the horrible truth.
+            agents[id-1].connections.insert(agents[fromID-1].id);
+            //Mark the agent redeeming the code.
+            agents[id-1].marked = true;
+
+            //If this is an intercept, surprise the agent with the "good" news.
+            if(fromIntercept)
+            {
+                agents[id-1].intercept_success = true;
+            }
+
+            return AgentDatabase::MARK;
         }
         else
         {
-            //Add the agent as a connection.
+            //Add as a connection to confuse things.
             agents[id-1].connections.insert(agents[fromID-1].id);
-            return AgentDatabase::SUCCESS;
+            //Decommission the agent redeeming the code.
+            agents[id-1].active = false;
+            //If there are still active agents, decrease the count thereof.
+            activeAgents > 0 ? activeAgents-- : 0;
+            checkInfiltratorWon();
+            return AgentDatabase::POISON;
         }
     }
+    else if(agents[id-1].connections.count(fromID) > 0)
+    {
+        return AgentDatabase::REPEAT;
+    }
+    else
+    {
+        //Add the agent as a connection.
+        agents[id-1].connections.insert(agents[fromID-1].id);
+        //If this is an intercept, surprise the agent with the good news.
+        if(fromIntercept)
+        {
+            agents[id-1].intercept_success = true;
+        }
+        return AgentDatabase::SUCCESS;
+    }
+
+    //We really can't logically get this far, but if we do...whatever.
     return AgentDatabase::SUCCESS;
 }
 
@@ -407,6 +477,49 @@ void AgentDatabase::printGameData(bool printAllCodes)
         }
 
     }
+}
+
+void AgentDatabase::updateTimer()
+{
+    //Get the current time.
+    time_t currentTime;
+    time(&currentTime);
+
+    double diffraw = difftime(currentTime, lastCheck);
+    int diff = static_cast<int>(diffraw);
+
+    for(unsigned int i = 0; i < agents.size(); i++)
+    {
+        if(agents[i].intercepts.size() > 0)
+        {
+            for(int i1 = 0; i1 < agents[i].intercepts.size(); i1++)
+            {
+                agents[i].intercepts[i1].decrease(diff);
+                //If we're out of time...
+                if(agents[i].intercepts[i1].secondsLeft <= 0)
+                {
+                    //Remove the intercept.
+                    agents[i].intercepts.erase(agents[i].intercepts.begin()+i1);
+                }
+            }
+        }
+
+        if(agents[i].encrypts.size() > 0)
+        {
+            for(int i2 = 0; i2 < agents[i].encrypts.size(); i2++)
+            {
+                agents[i].encrypts[i2].decrease(diff);
+                //If we're out of time...
+                if(agents[i].encrypts[i2].secondsLeft <= 0)
+                {
+                    //Remove the encrypt.
+                    agents[i].encrypts.erase(agents[i].encrypts.begin()+i2);
+                }
+            }
+        }
+    }
+
+    time(&lastCheck);
 }
 
 Glib::ustring AgentDatabase::int_to_ustring(int num)

@@ -23,16 +23,19 @@ class fileEncryption
         fileEncryption(Glib::ustring);
         virtual ~fileEncryption();
         /**A utility function that saves all agentDatabase info to a file for import later.
-        \param the AgentDatabase class object to retieve data from
+        \param the AgentDatabase class object to retrieve data from
         \return the resulting boolean*/
-        bool saveFile(AgentDatabase);
+        bool saveFile(AgentDatabase*);
         /**A utility function that reads game data from a file.
         \param the AgentDatabase class object to save data to
         \return the resulting boolean*/
         bool readFile(AgentDatabase*);
+        /**Returns the error message and clears it.
+        \return the error message string*/
+        Glib::ustring getError();
     private:
-        ///The game name which is also the filename data is saved to.
-        Glib::ustring gameName;
+        ///The absolute path to the game save file.
+        Glib::ustring gamePath;
         /**A utility function that encrypts the saved data file.
         \return the resulting boolean*/
         bool encryptFile();
@@ -45,6 +48,9 @@ class fileEncryption
         /**A utility function that offsets chars based on cipher.
         \return the resulting ustring*/
         Glib::ustring decrypt(Glib::ustring, int);
+
+        ///A string to store error messages.
+        Glib::ustring str_error;
 };
 
 #endif // FILEENCRYPTION_H

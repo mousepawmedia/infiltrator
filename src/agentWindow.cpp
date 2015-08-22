@@ -292,10 +292,21 @@ agentWindow::agentWindow(AgentDatabase* adb, int id)
         //Display the message.
         displayDecommDialog();
     }
-    else if(db->agents[agentID-1].surprise)
+
+    //If the agent is the infiltrator and won the game...
+    if(db->agents[agentID-1].surprise)
     {
         displayInfiltratorWon();
     }
+
+    //If the agent had a successful intercept.
+    if(db->agents[agentID-1].intercept_success)
+    {
+        displayInterceptSuccess();
+    }
+
+    //Update the encrypts and intercepts.
+    db->updateTimer();
 }
 
 void agentWindow::actionAccuse()
@@ -419,12 +430,60 @@ void agentWindow::actionDecomm()
 
 void agentWindow::actionEncrypt()
 {
+    Gtk::TreeModel::iterator iter = ref_sel_agents->get_selected();
 
+    //If something is selected.
+    if(iter)
+    {
+        //Get the ID from the row.
+        int id = (*iter)[mdl_col_agents.col_id];
+        //Creates an instance of a new popup window to enter intercept time.
+        timeWindow = new TimeSelectWindow("Protect Agent from Intercept", "How many seconds would \
+you like to spend to protect " + db->agents[id-1].firstName + " " +
+db->agents[id-1].lastName + " from being intercepted?", db,
+TimeSelectWindow::TIME_ENCRYPT, id, agentID);
+
+        /*The popup window should be modal, meaning we can't use this
+        while it is open.*/
+        timeWindow->set_modal(true);
+
+        //Keep the new popup window on top.
+        timeWindow->set_transient_for(*this);
+
+        /*Connect the signal that the popup window closed to the winClosed
+        function, so we can perform essential tasks and keep the game going!*/
+        timeWindow->signal_delete_event().connect(sigc::mem_fun(this, &agentWindow::winClosed));
+
+        //Now we're ready...show the popup window!
+        timeWindow->show();
+    }
 }
 
 void agentWindow::actionIntercept()
 {
+    Gtk::TreeModel::iterator iter = ref_sel_agents->get_selected();
 
+    //If something is selected.
+    if(iter)
+    {
+        //Get the ID from the row.
+        int id = (*iter)[mdl_col_agents.col_id];
+        //Creates an instance of a new popup window to enter intercept time.
+        timeWindow = new TimeSelectWindow("Intercept codes of an Agent", "How \
+many seconds would you like to use for an intercept on Agent " +
+db->agents[id-1].firstName + " " + db->agents[id-1].lastName + "?",
+db, TimeSelectWindow::TIME_INTERCEPT, id, agentID);
+        /*The popup window should be modal, meaning we can't use this
+        while it is open.*/
+        timeWindow->set_modal(true);
+        //Keep the new popup window on top.
+        timeWindow->set_transient_for(*this);
+        /*Connect the signal that the popup window closed to the winClosed
+        function, so we can perform essential tasks and keep the game going!*/
+        timeWindow->signal_delete_event().connect(sigc::mem_fun(this, &agentWindow::winClosed));
+        //Now we're ready...show the popup window!
+        timeWindow->show();
+    }
 }
 
 void agentWindow::actionNewSecurity()
@@ -447,7 +506,47 @@ is on, and you can only use it one time!</b>", true);
 
 void agentWindow::actionTransfer()
 {
+    Gtk::TreeModel::iterator iter = ref_sel_agents->get_selected();
 
+    //If something is selected.
+    if(iter)
+    {
+        //Get the ID from the row.
+        int id = (*iter)[mdl_col_agents.col_id];
+        //Creates an instance of a new popup window to enter intercept time.
+        timeWindow = new TimeSelectWindow("Transfer time to a teammate", "How \
+many seconds of intercept time would you like to transfer to Agent " +
+db->agents[id-1].firstName + " " + db->agents[id-1].lastName + "?",
+db, TimeSelectWindow::TIME_TRANSFER, id, agentID);
+        /*The popup window should be modal, meaning we can't use this
+        while it is open.*/
+        timeWindow->set_modal(true);
+        //Keep the new popup window on top.
+        timeWindow->set_transient_for(*this);
+        /*Connect the signal that the popup window closed to the winClosed
+        function, so we can perform essential tasks and keep the game going!*/
+        timeWindow->signal_delete_event().connect(sigc::mem_fun(this, &agentWindow::winClosed));
+        //Now we're ready...show the popup window!
+        timeWindow->show();
+    }
+}
+
+bool agentWindow::winClosed(GdkEventAny* event)
+{
+    //If we have an agent window defined (the pointer is not null).
+    if(timeWindow != 0)
+    {
+        //Delete the dynamically allocated window object.
+        delete timeWindow;
+        //Reset the pointer to null.
+        timeWindow = 0;
+    }
+
+    //Update the interface.
+    refreshButtons();
+
+    //Do NOT prevent other handlers from working with the window's delete_event.
+    return false;
 }
 
 void agentWindow::addAgents()
@@ -529,6 +628,20 @@ void agentWindow::displayInfiltratorWon()
 You have eliminated all the other agents. You won the title of SPYCATCHER! \
 You may now <b>announce yourself to the others.</b>", true);
         dlg_won.run();
+    }
+}
+
+void agentWindow::displayInterceptSuccess()
+{
+    if(db->agents[agentID-1].intercept_success)
+    {
+        db->agents[agentID-1].intercept_success = false;
+        //The infiltrator won!
+        Gtk::MessageDialog dlg_success(*this, "Intercept Successful",
+        false, Gtk::MESSAGE_INFO, Gtk::BUTTONS_OK, true);
+        dlg_success.set_secondary_text("You successfully intercepted one or more \
+codes. Well done, agent.", true);
+        dlg_success.run();
     }
 }
 
@@ -673,13 +786,6 @@ void agentWindow::refreshButtons()
         //If the selected agent is active...
         if(db->agents[id-1].active)
         {
-            //If the current agent has interception time available...
-            if(db->agents[agentID-1].tapSeconds > 0)
-            {
-                //The selected agent can be intercepted. Activate that button.
-                btn_intercept.set_sensitive(true);
-            }
-
             //If the selected agent is one of the current agent's connections...
             if(db->agents[agentID-1].connections.count(id) > 0)
             {
@@ -699,6 +805,16 @@ void agentWindow::refreshButtons()
                         //The agent can receive interception time. Activate that button.
                         btn_transfer.set_sensitive(true);
                     }
+                }
+            }
+            //Otherwise, if the agent is NOT a connection...
+            else
+            {
+                //If the current agent has interception time available...
+                if(db->agents[agentID-1].tapSeconds > 0)
+                {
+                    //The selected agent can be intercepted. Activate that button.
+                    btn_intercept.set_sensitive(true);
                 }
             }
         }
@@ -785,6 +901,16 @@ ruin the game for everyone else.", true);
             //Deactivate interface.
             refreshButtons();
 
+            break;
+        }
+        case AgentDatabase::INTERCEPTED:
+        {
+            Gtk::MessageDialog dlg_code_intercept(*this, "Intercepted!",
+                false, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK, true);
+            dlg_code_intercept.set_secondary_text("The code you just entered \
+was intercepted! You need to get another code from the agent to make a \
+a connection from them now.", true);
+            dlg_code_intercept.run();
             break;
         }
     }
