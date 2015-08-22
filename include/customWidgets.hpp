@@ -92,8 +92,16 @@ class RulesNotebook : public Gtk::Notebook
         };
 
         MarkupTextView view_about;
+        MarkupTextView view_objectives;
         MarkupTextView view_setup;
-        MarkupTextView view_gameplay;
+        MarkupTextView view_gamescreen;
+        MarkupTextView view_gettingstarted;
+        MarkupTextView view_codes;
+        MarkupTextView view_winning;
+        MarkupTextView view_tricks;
+        MarkupTextView view_teams;
+        MarkupTextView view_infiltrator;
+        MarkupTextView view_tech;
 };
 
 

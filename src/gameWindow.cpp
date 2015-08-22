@@ -10,6 +10,10 @@ gameWindow::gameWindow(AgentDatabase* adb, fileEncryption* afe)
     //Let's also give our window a nicer title.
     set_title("Infiltrator");
 
+    /*Attach the close signal to the window, to prevent accidental game
+    closure without save.*/
+    signal_delete_event().connect(sigc::mem_fun(this, &gameWindow::winClosed));
+
     //This first box should be vertical.
     box_main.set_orientation(Gtk::ORIENTATION_VERTICAL);
 
@@ -69,12 +73,14 @@ gameWindow::gameWindow(AgentDatabase* adb, fileEncryption* afe)
     //Add the login button to the grid.
     grd_login.attach_next_to(btn_login, lbl_login_msg, Gtk::POS_RIGHT, 1, 1);
 
-    /*
-    //NOTE: Temporary override for testing ONLY!
-    txt_id.set_text("1");
-    txt_security.set_text(AgentDatabase::int_to_ustring(db->agents[0].securitycode));
-    login();*/
-    //END OF OVERRIDE
+    box_main.pack_start(nbk_main, Gtk::PACK_SHRINK);
+
+    //Add scores interface to screen.
+    box_scores.set_orientation(Gtk::ORIENTATION_VERTICAL);
+    nbk_main.append_page(box_scores, "Scoreboard");
+
+    //Add rules notebook to screen.
+    nbk_main.append_page(nbk_rules, "Rules");
 
     //Let's use Pango for the game status header label as well.
     lbl_scores_header.set_use_markup(true);
@@ -87,12 +93,12 @@ gameWindow::gameWindow(AgentDatabase* adb, fileEncryption* afe)
     //Center the game status (scores) header label.
     lbl_scores_header.set_justify(Gtk::JUSTIFY_CENTER);
     //Add the game status label to the main box.
-    box_main.pack_start(lbl_scores_header, Gtk::PACK_SHRINK);
+    box_scores.pack_start(lbl_scores_header, Gtk::PACK_SHRINK);
 
     //Add the scores list to the scrollable box for it.
     scrl_lst_scores.add(lst_scores);
     //Add the scrollable box for the scores list to the main box.
-    box_main.pack_start(scrl_lst_scores);
+    box_scores.pack_start(scrl_lst_scores);
 
     //Define the agent list and set its model.
     ref_mdl_scores = Gtk::ListStore::create(mdl_col_score);
@@ -277,6 +283,7 @@ bool gameWindow::winClosed(GdkEventAny* event)
     {
         //Delete the dynamically allocated window object.
         delete agentWin;
+        agentWin = 0;
     }
 
     //Update the scores.

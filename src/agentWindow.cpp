@@ -807,15 +807,16 @@ void agentWindow::refreshButtons()
                     }
                 }
             }
-            //Otherwise, if the agent is NOT a connection...
-            else
+        }
+
+        //If the agent is NOT a connection (active or not doesn't matter)...
+        if(db->agents[agentID-1].connections.count(id) <= 0)
+        {
+            //If the current agent has interception time available...
+            if(db->agents[agentID-1].tapSeconds > 0)
             {
-                //If the current agent has interception time available...
-                if(db->agents[agentID-1].tapSeconds > 0)
-                {
-                    //The selected agent can be intercepted. Activate that button.
-                    btn_intercept.set_sensitive(true);
-                }
+                //The selected agent can be intercepted. Activate that button.
+                btn_intercept.set_sensitive(true);
             }
         }
 

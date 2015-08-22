@@ -81,7 +81,7 @@ void primaryWindow::playGame()
     if(db != 0 && fe != 0)
     {
         //NOTE: Turn this off before release!
-        db->printGameData();
+        ////db->printGameData();
 
         //Create a new game window with the database.
         win_game = new gameWindow(db, fe);

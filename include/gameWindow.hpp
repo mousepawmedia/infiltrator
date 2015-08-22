@@ -24,6 +24,12 @@ class gameWindow : public Gtk::Window
         \param a pointer to the file encryption object we're using*/
         gameWindow(AgentDatabase*, fileEncryption*);
 
+        /**Save the game.*/
+        void saveGame();
+
+        /**Update the contents for the scores (game status) list, lst_scores.*/
+        void updateScores();
+
         ~gameWindow();
     private:
         /**The pointer to the agent database instance that the whole game is
@@ -35,6 +41,8 @@ class gameWindow : public Gtk::Window
 
         /**The main box containing stuff.*/
         Gtk::Box box_main;
+
+        Gtk::Box box_scores;
 
         /**The grid containing the login stuff. More efficient in this scenario
         than using a whole ton of boxes.*/
@@ -65,6 +73,9 @@ class gameWindow : public Gtk::Window
         /**The label introducing the game status/high scores sector in a fancy
         way. More prettiness!*/
         Gtk::Label lbl_scores_header;
+
+        Gtk::Notebook nbk_main;
+        RulesNotebook nbk_rules;
 
         /**A pointer to the agent window, for when we dynamically allocate and
         define a new one on the login() function.*/
@@ -109,12 +120,6 @@ class gameWindow : public Gtk::Window
 
         /**Login using the ID and security code entered on the interface.*/
         void login();
-
-        /**Save the game.*/
-        void saveGame();
-
-        /**Update the contents for the scores (game status) list, lst_scores.*/
-        void updateScores();
 
         /**Handle the signal that the agent window opened by login() was closed.
         \param gtkmm demands a sacrifice, and it selects it itself. (The handler

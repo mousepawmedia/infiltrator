@@ -55,6 +55,7 @@ bool fileEncryption::readFile(AgentDatabase *agent)
             //Reading agent general info from saved game file
             agent->activeAgents = decryptFileInt(&myfile, cipher);
             agent->spycatcher = decryptFileInt(&myfile, cipher);
+            agent->keygen->gamemasterCode = decryptFileInt(&myfile, cipher);
             agent->keygen->entropy = decryptFileInt(&myfile, cipher);
 
             //Reading team info from saved game file
@@ -127,7 +128,7 @@ bool fileEncryption::readFile(AgentDatabase *agent)
                 if(temp != "0")
                 {
                     char* token = &temp[0];
-                    char* codetemp = strtok(token, ",");;
+                    char* codetemp = strtok(token, ",");
                     while(codetemp != NULL)
                     {
                         int code = atoi(codetemp);
@@ -136,8 +137,47 @@ bool fileEncryption::readFile(AgentDatabase *agent)
                     }
                 }
 
-                /*TODO: Needs to load Intercept and Encrypt objects. They are
-                stored as "ownerID:timeLeft,ownerID:timeLeft,ownerID:timeLeft"*/
+                getline(myfile, temp);
+                temp = decrypt(temp, cipher);
+
+                //Gets a comma separated list of intercept ownerIDs and seconds left and tokenizes them.  Then after some converting puts them into the intercept vector.
+                if(temp != "0")
+                {
+                    char* token = &temp[0];
+                    char* ownerID = strtok(token, ",");
+                    while(ownerID != NULL)
+                    {
+                        AgentDatabase::Intercept intercept;
+                        int id = atoi(ownerID);
+                        intercept.ownerID = id;
+                        char* secondsLeft = strtok(NULL, ",");
+                        int time = atoi(secondsLeft);
+                        intercept.secondsLeft = time;
+                        myagent.intercepts.push_back(intercept);
+                        ownerID = strtok(NULL, ",");
+                    }
+                }
+
+                getline(myfile, temp);
+                temp = decrypt(temp, cipher);
+
+                //Gets a comma separated list of encrypt ownerIDs and seconds left and tokenizes them.  Then after some converting puts them into the encrypt vector.
+                if(temp != "0")
+                {
+                    char* token = &temp[0];
+                    char* ownerID = strtok(token, ",");
+                    while(ownerID != NULL)
+                    {
+                        AgentDatabase::Encrypt encrypt;
+                        int id = atoi(ownerID);
+                        encrypt.ownerID = id;
+                        char* secondsLeft = strtok(NULL, ",");
+                        int time = atoi(secondsLeft);
+                        encrypt.secondsLeft = time;
+                        myagent.encrypts.push_back(encrypt);
+                        ownerID = strtok(NULL, ",");
+                    }
+                }
 
                 //Adds agent to agent vector
                 agent->agents.push_back(myagent);
@@ -306,6 +346,9 @@ bool fileEncryption::saveFile(AgentDatabase* agent)
             myfile << agent->activeAgents << endl;
             myfile << agent->spycatcher << endl;
 
+            //Save gamemaster code.
+            myfile << agent->keygen->gamemasterCode << endl;
+
             //Saves the entropy number for reverse engineering
             myfile << agent->keygen->entropy << endl;
 
@@ -407,7 +450,39 @@ bool fileEncryption::saveFile(AgentDatabase* agent)
                     myfile << "0";
                 myfile << endl;
 
-                //TODO: Store the intercept and encrypt data.
+                //Same as above with intercept vector
+                if(agent->agents[i].intercepts.size() > 0)
+                {
+                    unsigned int count = 0;
+                    for (vector<AgentDatabase::Intercept>::iterator it = agent->agents[i].intercepts.begin() ; it != agent->agents[i].intercepts.end(); ++it)
+                    {
+                        if(count + 1 == agent->agents[i].intercepts.size())
+                            myfile << it->ownerID << "," << it->secondsLeft;
+                        else
+                            myfile << it->ownerID << "," << it->secondsLeft << ",";
+                        count++;
+                    }
+                }
+                else
+                    myfile << "0";
+                myfile << endl;
+
+                //Same as above except with encrypt vector
+                if(agent->agents[i].encrypts.size() > 0)
+                {
+                    unsigned int count = 0;
+                    for (vector<AgentDatabase::Encrypt>::iterator it = agent->agents[i].encrypts.begin() ; it != agent->agents[i].encrypts.end(); ++it)
+                    {
+                        if(count + 1 == agent->agents[i].encrypts.size())
+                            myfile << it->ownerID << "," << it->secondsLeft;
+                        else
+                            myfile << it->ownerID << "," << it->secondsLeft << ",";
+                        count++;
+                    }
+                }
+                else
+                    myfile << "0";
+                myfile << endl;
 
             }
             myfile.close();
