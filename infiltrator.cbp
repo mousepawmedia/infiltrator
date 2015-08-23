@@ -42,6 +42,7 @@
 		<Unit filename="include/customWidgets.hpp" />
 		<Unit filename="include/fileEncryption.hpp" />
 		<Unit filename="include/gameWindow.hpp" />
+		<Unit filename="include/infoWindow.hpp" />
 		<Unit filename="include/keyGen.hpp" />
 		<Unit filename="include/playerList.hpp" />
 		<Unit filename="include/primaryWindow.hpp" />
@@ -52,6 +53,7 @@
 		<Unit filename="src/customWidgets.cpp" />
 		<Unit filename="src/fileEncryption.cpp" />
 		<Unit filename="src/gameWindow.cpp" />
+		<Unit filename="src/infoWindow.cpp" />
 		<Unit filename="src/keyGen.cpp" />
 		<Unit filename="src/playerList.cpp" />
 		<Unit filename="src/primaryWindow.cpp" />
