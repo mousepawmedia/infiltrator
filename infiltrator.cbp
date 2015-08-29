@@ -6,34 +6,244 @@
 		<Option pch_mode="2" />
 		<Option compiler="gcc" />
 		<Build>
-			<Target title="Debug">
-				<Option output="bin/Debug/infiltrator" prefix_auto="1" extension_auto="1" />
-				<Option object_output="obj/Debug/" />
+			<Target title="Debug64">
+				<Option output="bin/Debug/x64/infiltrator" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Debug/x64/" />
 				<Option type="1" />
 				<Option compiler="gcc" />
+				<Option use_console_runner="0" />
 				<Compiler>
+					<Add option="-std=c++11" />
+					<Add option="-Wall" />
 					<Add option="-g" />
-					<Add option="`pkg-config --cflags glibmm-2.4 gtkmm-3.0 icu-uc icu-io`" />
+					<Add option="-m64 `pkg-config --cflags glibmm-2.4 gtkmm-3.0 icu-uc icu-io`" />
 					<Add directory="include" />
 				</Compiler>
 				<Linker>
 					<Add option="`pkg-config  --libs glibmm-2.4 gtkmm-3.0 icu-uc icu-io`" />
 				</Linker>
 			</Target>
-			<Target title="Release">
-				<Option output="bin/Release/infiltrator" prefix_auto="1" extension_auto="1" />
-				<Option object_output="obj/Release/" />
+			<Target title="Debug32">
+				<Option output="bin/Debug/x86/infiltrator" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Debug/x86/" />
 				<Option type="1" />
+				<Option compiler="gcc" />
+				<Option use_console_runner="0" />
+				<Compiler>
+					<Add option="-std=c++11" />
+					<Add option="-Wall" />
+					<Add option="-g" />
+					<Add option="-m32 `pkg-config --cflags glibmm-2.4 gtkmm-3.0 icu-uc icu-io`" />
+					<Add directory="include" />
+				</Compiler>
+				<Linker>
+					<Add option="`pkg-config  --libs glibmm-2.4 gtkmm-3.0 icu-uc icu-io`" />
+				</Linker>
+			</Target>
+			<Target title="DebugWin64">
+				<Option output="bin/Debug/Winx64/infiltrator" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Debug/Winx64/" />
+				<Option type="1" />
+				<Option compiler="mingw" />
+				<Option use_console_runner="0" />
+				<Compiler>
+					<Add option="-std=c++11" />
+					<Add option="-Wall" />
+					<Add option="-g" />
+					<Add option="-m64 `pkg-config --cflags glibmm-2.4 gtkmm-3.0 icu-uc icu-io`" />
+					<Add option="-DWINVER=0x0400" />
+					<Add option="-D__WIN95__" />
+					<Add option="-D__GNUWIN32__" />
+					<Add option="-DSTRICT" />
+					<Add option="-DHAVE_W32API_H" />
+					<Add option="-D__WXMSW__" />
+					<Add option="-D__WINDOWS__" />
+					<Add directory="include" />
+				</Compiler>
+				<Linker>
+					<Add option="`pkg-config  --libs glibmm-2.4 gtkmm-3.0 icu-uc icu-io`" />
+					<Add option="-lstdc++" />
+					<Add option="-lgcc" />
+					<Add option="-lodbc32" />
+					<Add option="-lwsock32" />
+					<Add option="-lwinspool" />
+					<Add option="-lwinmm" />
+					<Add option="-lshell32" />
+					<Add option="-lcomctl32" />
+					<Add option="-lctl3d32" />
+					<Add option="-lodbc32" />
+					<Add option="-ladvapi32" />
+					<Add option="-lodbc32" />
+					<Add option="-lwsock32" />
+					<Add option="-lopengl32" />
+					<Add option="-lglu32" />
+					<Add option="-lole32" />
+					<Add option="-loleaut32" />
+					<Add option="-luuid" />
+				</Linker>
+			</Target>
+			<Target title="DebugWin32">
+				<Option output="bin/Debug/Winx86/infiltrator" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Debug/Winx86/" />
+				<Option type="1" />
+				<Option compiler="mingw" />
+				<Option use_console_runner="0" />
+				<Compiler>
+					<Add option="-std=c++11" />
+					<Add option="-Wall" />
+					<Add option="-g" />
+					<Add option="-m32 `pkg-config --cflags glibmm-2.4 gtkmm-3.0 icu-uc icu-io`" />
+					<Add option="-DWINVER=0x0400" />
+					<Add option="-D__WIN95__" />
+					<Add option="-D__GNUWIN32__" />
+					<Add option="-DSTRICT" />
+					<Add option="-DHAVE_W32API_H" />
+					<Add option="-D__WXMSW__" />
+					<Add option="-D__WINDOWS__" />
+					<Add directory="include" />
+				</Compiler>
+				<Linker>
+					<Add option="`pkg-config  --libs glibmm-2.4 gtkmm-3.0 icu-uc icu-io`" />
+					<Add option="-lstdc++" />
+					<Add option="-lgcc" />
+					<Add option="-lodbc32" />
+					<Add option="-lwsock32" />
+					<Add option="-lwinspool" />
+					<Add option="-lwinmm" />
+					<Add option="-lshell32" />
+					<Add option="-lcomctl32" />
+					<Add option="-lctl3d32" />
+					<Add option="-lodbc32" />
+					<Add option="-ladvapi32" />
+					<Add option="-lodbc32" />
+					<Add option="-lwsock32" />
+					<Add option="-lopengl32" />
+					<Add option="-lglu32" />
+					<Add option="-lole32" />
+					<Add option="-loleaut32" />
+					<Add option="-luuid" />
+				</Linker>
+			</Target>
+			<Target title="Release64">
+				<Option output="bin/Release/x64/infiltrator" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Release/x64/" />
+				<Option type="0" />
 				<Option compiler="gcc" />
 				<Compiler>
 					<Add option="-O2" />
+					<Add option="-std=c++11" />
+					<Add option="-m64 `pkg-config --cflags glibmm-2.4 gtkmm-3.0 icu-uc icu-io`" />
 					<Add directory="include" />
 				</Compiler>
 				<Linker>
 					<Add option="-s" />
+					<Add option="`pkg-config  --libs glibmm-2.4 gtkmm-3.0 icu-uc icu-io`" />
+				</Linker>
+			</Target>
+			<Target title="Release32">
+				<Option output="bin/Release/x86/infiltrator" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Release/x86/" />
+				<Option type="0" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-O2" />
+					<Add option="-std=c++11" />
+					<Add option="-m32 `pkg-config --cflags glibmm-2.4 gtkmm-3.0 icu-uc icu-io`" />
+					<Add directory="include" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+					<Add option="`pkg-config  --libs glibmm-2.4 gtkmm-3.0 icu-uc icu-io`" />
+				</Linker>
+			</Target>
+			<Target title="ReleaseWin64">
+				<Option output="bin/Debug/Winx64/infiltrator" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Debug/Winx64/" />
+				<Option type="1" />
+				<Option compiler="mingw" />
+				<Option use_console_runner="0" />
+				<Compiler>
+					<Add option="-O2" />
+					<Add option="-std=c++11" />
+					<Add option="-m64 `pkg-config --cflags glibmm-2.4 gtkmm-3.0 icu-uc icu-io`" />
+					<Add option="-DWINVER=0x0400" />
+					<Add option="-D__WIN95__" />
+					<Add option="-D__GNUWIN32__" />
+					<Add option="-DSTRICT" />
+					<Add option="-DHAVE_W32API_H" />
+					<Add option="-D__WXMSW__" />
+					<Add option="-D__WINDOWS__" />
+					<Add directory="include" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+					<Add option="`pkg-config  --libs glibmm-2.4 gtkmm-3.0 icu-uc icu-io`" />
+					<Add option="-lstdc++" />
+					<Add option="-lgcc" />
+					<Add option="-lodbc32" />
+					<Add option="-lwsock32" />
+					<Add option="-lwinspool" />
+					<Add option="-lwinmm" />
+					<Add option="-lshell32" />
+					<Add option="-lcomctl32" />
+					<Add option="-lctl3d32" />
+					<Add option="-lodbc32" />
+					<Add option="-ladvapi32" />
+					<Add option="-lodbc32" />
+					<Add option="-lwsock32" />
+					<Add option="-lopengl32" />
+					<Add option="-lglu32" />
+					<Add option="-lole32" />
+					<Add option="-loleaut32" />
+					<Add option="-luuid" />
+				</Linker>
+			</Target>
+			<Target title="ReleaseWin32">
+				<Option output="bin/Release/Winx32/infiltrator" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Release/Winx32/" />
+				<Option type="1" />
+				<Option compiler="mingw" />
+				<Option use_console_runner="0" />
+				<Compiler>
+					<Add option="-O2" />
+					<Add option="-std=c++11" />
+					<Add option="-m32 `pkg-config --cflags glibmm-2.4 gtkmm-3.0 icu-uc icu-io`" />
+					<Add option="-DWINVER=0x0400" />
+					<Add option="-D__WIN95__" />
+					<Add option="-D__GNUWIN32__" />
+					<Add option="-DSTRICT" />
+					<Add option="-DHAVE_W32API_H" />
+					<Add option="-D__WXMSW__" />
+					<Add option="-D__WINDOWS__" />
+					<Add directory="include" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+					<Add option="`pkg-config  --libs glibmm-2.4 gtkmm-3.0 icu-uc icu-io`" />
+					<Add option="-lstdc++" />
+					<Add option="-lgcc" />
+					<Add option="-lodbc32" />
+					<Add option="-lwsock32" />
+					<Add option="-lwinspool" />
+					<Add option="-lwinmm" />
+					<Add option="-lshell32" />
+					<Add option="-lcomctl32" />
+					<Add option="-lctl3d32" />
+					<Add option="-lodbc32" />
+					<Add option="-ladvapi32" />
+					<Add option="-lodbc32" />
+					<Add option="-lwsock32" />
+					<Add option="-lopengl32" />
+					<Add option="-lglu32" />
+					<Add option="-lole32" />
+					<Add option="-loleaut32" />
+					<Add option="-luuid" />
 				</Linker>
 			</Target>
 		</Build>
+		<VirtualTargets>
+			<Add alias="FullRelease" targets="Release64;Release32;ReleaseWin64;ReleaseWin32;" />
+		</VirtualTargets>
 		<Compiler>
 			<Add option="-Wall" />
 		</Compiler>
