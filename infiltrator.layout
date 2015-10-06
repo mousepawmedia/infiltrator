@@ -1,14 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
 <CodeBlocks_layout_file>
-	<ActiveTarget name="FullRelease" />
-	<File name="src/gameWindow.cpp" open="1" top="0" tabpos="1" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<ActiveTarget name="DebugWin32" />
+	<File name="include/customWidgets.hpp" open="0" top="0" tabpos="7" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="7868" topLine="0" />
-		</Cursor>
-	</File>
-	<File name="include/agentDatabase.hpp" open="0" top="0" tabpos="4" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="2796" topLine="84" />
+			<Cursor1 position="2648" topLine="24" />
 		</Cursor>
 	</File>
 	<File name="include/fileEncryption.hpp" open="0" top="0" tabpos="13" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
@@ -21,29 +16,24 @@
 			<Cursor1 position="576" topLine="0" />
 		</Cursor>
 	</File>
+	<File name="src/infoWindow.cpp" open="0" top="0" tabpos="3" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="3224" topLine="72" />
+		</Cursor>
+	</File>
+	<File name="src/keyGen.cpp" open="0" top="0" tabpos="7" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="2013" topLine="0" />
+		</Cursor>
+	</File>
 	<File name="include/keyGen.hpp" open="0" top="0" tabpos="6" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
 			<Cursor1 position="728" topLine="21" />
 		</Cursor>
 	</File>
-	<File name="main.cpp" open="0" top="0" tabpos="1" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="src/agentWindow.cpp" open="0" top="0" tabpos="3" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="1226" topLine="14" />
-		</Cursor>
-	</File>
-	<File name="src/setupWindow.cpp" open="1" top="0" tabpos="2" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="8870" topLine="236" />
-		</Cursor>
-	</File>
-	<File name="include/primaryWindow.hpp" open="0" top="0" tabpos="17" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="794" topLine="14" />
-		</Cursor>
-	</File>
-	<File name="include/customWidgets.hpp" open="0" top="0" tabpos="7" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="2648" topLine="24" />
+			<Cursor1 position="301" topLine="0" />
 		</Cursor>
 	</File>
 	<File name="include/gameWindow.hpp" open="0" top="0" tabpos="6" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
@@ -56,19 +46,24 @@
 			<Cursor1 position="8991" topLine="234" />
 		</Cursor>
 	</File>
-	<File name="src/fileEncryption.cpp" open="0" top="0" tabpos="9" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="src/primaryWindow.cpp" open="0" top="0" tabpos="14" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="1462" topLine="0" />
+			<Cursor1 position="2069" topLine="72" />
 		</Cursor>
 	</File>
-	<File name="src/keyGen.cpp" open="0" top="0" tabpos="7" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="include/agentDatabase.hpp" open="0" top="0" tabpos="4" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="2013" topLine="0" />
+			<Cursor1 position="2796" topLine="84" />
 		</Cursor>
 	</File>
-	<File name="src/customWidgets.cpp" open="1" top="0" tabpos="4" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="src/gameWindow.cpp" open="1" top="0" tabpos="1" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="546" topLine="360" />
+			<Cursor1 position="285" topLine="0" />
+		</Cursor>
+	</File>
+	<File name="include/primaryWindow.hpp" open="0" top="0" tabpos="17" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="794" topLine="14" />
 		</Cursor>
 	</File>
 	<File name="include/agentWindow.hpp" open="0" top="0" tabpos="2" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
@@ -76,19 +71,24 @@
 			<Cursor1 position="525" topLine="0" />
 		</Cursor>
 	</File>
-	<File name="src/agentWindow.cpp" open="0" top="0" tabpos="3" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="src/setupWindow.cpp" open="0" top="0" tabpos="2" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="301" topLine="0" />
+			<Cursor1 position="8870" topLine="236" />
 		</Cursor>
 	</File>
-	<File name="src/infoWindow.cpp" open="1" top="0" tabpos="3" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="src/fileEncryption.cpp" open="0" top="0" tabpos="9" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="3224" topLine="72" />
+			<Cursor1 position="1462" topLine="0" />
 		</Cursor>
 	</File>
-	<File name="src/primaryWindow.cpp" open="0" top="0" tabpos="14" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="main.cpp" open="1" top="0" tabpos="2" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="2069" topLine="72" />
+			<Cursor1 position="0" topLine="0" />
+		</Cursor>
+	</File>
+	<File name="src/customWidgets.cpp" open="0" top="0" tabpos="4" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="546" topLine="360" />
 		</Cursor>
 	</File>
 </CodeBlocks_layout_file>
