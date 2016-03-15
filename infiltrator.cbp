@@ -40,17 +40,18 @@
 					<Add option="`pkg-config  --libs glibmm-2.4 gtkmm-3.0 icu-uc icu-io`" />
 				</Linker>
 			</Target>
-			<Target title="DebugWin32">
+			<Target title="DebugWin64">
 				<Option output="bin/Debug/Winx86/infiltrator" prefix_auto="1" extension_auto="1" />
 				<Option object_output="obj/Debug/Winx86/" />
 				<Option type="1" />
-				<Option compiler="mingw" />
+				<Option compiler="msys2" />
 				<Option use_console_runner="0" />
 				<Compiler>
 					<Add option="-std=c++11" />
 					<Add option="-Wall" />
 					<Add option="-g" />
-					<Add option="`pkg-config glibmm-2.4 gtkmm-3.0 --cflags --libs`" />
+					<Add option="-m64" />
+					<Add option="-mms-bitfields -pthread -mms-bitfields -I/c/msys64/mingw64/include/gtkmm-3.0 -I/c/msys64/mingw64/lib/gtkmm-3.0/include -I/c/msys64/mingw64/include/atkmm-1.6 -I/c/msys64/mingw64/include/gdkmm-3.0 -I/c/msys64/mingw64/lib/gdkmm-3.0/include -I/c/msys64/mingw64/include/giomm-2.4 -I/c/msys64/mingw64/lib/giomm-2.4/include -I/c/msys64/mingw64/include/pangomm-1.4 -I/c/msys64/mingw64/lib/pangomm-1.4/include -I/c/msys64/mingw64/include/glibmm-2.4 -I/c/msys64/mingw64/lib/glibmm-2.4/include -I/c/msys64/mingw64/include/gtk-3.0 -I/c/msys64/mingw64/include/cairo -I/c/msys64/mingw64/include -I/c/msys64/mingw64/include/pango-1.0 -I/c/msys64/mingw64/include/atk-1.0 -I/c/msys64/mingw64/include/cairo -I/c/msys64/mingw64/include/cairomm-1.0 -I/c/msys64/mingw64/lib/cairomm-1.0/include -I/c/msys64/mingw64/include/cairo -I/c/msys64/mingw64/include/pixman-1 -I/c/msys64/mingw64/include -I/c/msys64/mingw64/include/freetype2 -I/c/msys64/mingw64/include/libpng16 -I/c/msys64/mingw64/include/harfbuzz -I/c/msys64/mingw64/include/glib-2.0 -I/c/msys64/mingw64/lib/glib-2.0/include -I/c/msys64/mingw64/include -I/c/msys64/mingw64/include/freetype2 -I/c/msys64/mingw64/include -I/c/msys64/mingw64/include/harfbuzz -I/c/msys64/mingw64/include/libpng16 -I/c/msys64/mingw64/include/sigc++-2.0 -I/c/msys64/mingw64/lib/sigc++-2.0/include -I/c/msys64/mingw64/include/gdk-pixbuf-2.0 -I/c/msys64/mingw64/include/libpng16 -I/c/msys64/mingw64/include/glib-2.0 -I/c/msys64/mingw64/lib/glib-2.0/include" />
 					<Add option="-DWINVER=0x0400" />
 					<Add option="-D__WIN95__" />
 					<Add option="-D__GNUWIN32__" />
@@ -59,14 +60,19 @@
 					<Add option="-D__WXMSW__" />
 					<Add option="-D__WINDOWS__" />
 					<Add directory="include" />
-					<Add directory="../../MINGW_BUILDS/include" />
+					<Add directory="C:/msys64/mingw64/include" />
 				</Compiler>
 				<ResourceCompiler>
 					<Add directory="../../MINGW_BUILDS/include" />
 				</ResourceCompiler>
 				<Linker>
-					<Add directory="../../MINGW_BUILDS/lib" />
+					<Add option="-m64" />
+					<Add option="-L/c/msys64/mingw64/lib -LC:/building/msys64/mingw64/lib -L/c/msys64/mingw64/lib -LC:/building/msys64/mingw64/lib/../lib -L/c/msys64/mingw64/lib -lgtkmm-3.0 -latkmm-1.6 -lgdkmm-3.0 -lgiomm-2.4 -lpangomm-1.4 -lglibmm-2.4 -lgtk-3 -lgdk-3 -lgdi32 -limm32 -lshell32 -lole32 -Wl,-luuid -lwinmm -ldwmapi -lz -lepoxy -lpangocairo-1.0 -lpangoft2-1.0 -lpangowin32-1.0 -lgdi32 -lusp10 -lpango-1.0 -lm -latk-1.0 -lcairo-gobject -lgio-2.0 -lz -lcairomm-1.0 -lcairo -lz -lpixman-1 -lfontconfig -lexpat -lfreetype -liconv -lexpat -lfreetype -lz -lbz2 -lharfbuzz -lpng16 -lz -lsigc-2.0 -lgdk_pixbuf-2.0 -lgmodule-2.0 -pthread -lpng16 -lz -lgobject-2.0 -lffi -lglib-2.0 -lintl -pthread -lws2_32 -lole32 -lwinmm -lshlwapi -lintl" />
+					<Add directory="C:/msys64/mingw64/lib" />
 				</Linker>
+				<ExtraCommands>
+					<Add before="pwd" />
+				</ExtraCommands>
 			</Target>
 			<Target title="Release64">
 				<Option output="bin/Release/x64/infiltrator" prefix_auto="1" extension_auto="1" />
