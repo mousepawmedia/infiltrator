@@ -5,3 +5,8 @@
 *.layout
 **/obj
 **/bin
+
+.env
+.pk
+.pem
+.pub
